@@ -60,12 +60,17 @@ class GenericRepo {
       const { selectOptions, condition, transaction, inclussions, paginateOptions } = this.query
       const {limit, offset } = paginateOptions
       if(inclussions){
-         return this.dbQuery.find(condition)
-                  .populate(inclussions[0])
-                  .sort({ createdAt: 1 })
-                  .skip(offset)
-                  .limit(limit)
-                  .exec()
+         if(inclussions.length > 0){
+            let query = this.dbQuery.find(condition)
+            for(var item of inclussions){
+              query = query.populate({path: item, options: { strictPopulate: false },})
+            }
+            return query.sort({ createdAt: 1 })
+                        .skip(offset)
+                        .limit(limit)
+                        .exec()
+         }
+         
       }
       return this.dbQuery.find(condition)
                   .sort({ createdAt: 1 })

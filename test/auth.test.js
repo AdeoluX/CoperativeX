@@ -59,6 +59,45 @@ describe('Authentication Tests', () => {
         console.log(response.body)
         expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
+    test('should verify email', async () => {
+        jest.setTimeout(newTimeout)
+        const response = await request
+            .post('/api/v1/auth/verify-email')
+            .set('Accept', 'application/json')
+            .send({
+                otp,
+                id: otp_id,
+            });
+        console.log(response.body)
+        expect(response.status).toBe(httpStatus.OK);
+    });
+
+    test('should fail to verify email', async () => {
+        jest.setTimeout(newTimeout)
+        const response = await request
+            .post('/api/v1/auth/verify-email')
+            .set('Accept', 'application/json')
+            .send({
+                otp,
+                id: '65e5e60b5437d6dbf1167c92',
+            });
+        console.log(response.body)
+        expect(response.status).toBe(httpStatus.BAD_REQUEST);
+        expect(response.body.message).toBe('Invalid Otp')
+    });
+
+    test('should fail to verify email', async () => {
+        jest.setTimeout(newTimeout)
+        const response = await request
+            .post('/api/v1/auth/verify-email')
+            .set('Accept', 'application/json')
+            .send({
+                otp,
+            });
+        console.log(response.body)
+        expect(response.status).toBe(httpStatus.BAD_REQUEST);
+        expect(response.body.message).toBe('"id" is required');
+    });
     test('should login', async () => {
         jest.setTimeout(newTimeout)
         const response = await request
@@ -112,45 +151,7 @@ describe('Authentication Tests', () => {
         expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
 
-    test('should verify email', async () => {
-        jest.setTimeout(newTimeout)
-        const response = await request
-            .post('/api/v1/auth/verify-email')
-            .set('Accept', 'application/json')
-            .send({
-                otp,
-                id: otp_id,
-            });
-        console.log(response.body)
-        expect(response.status).toBe(httpStatus.OK);
-    });
-
-    test('should fail to verify email', async () => {
-        jest.setTimeout(newTimeout)
-        const response = await request
-            .post('/api/v1/auth/verify-email')
-            .set('Accept', 'application/json')
-            .send({
-                otp,
-                id: '65e5e60b5437d6dbf1167c92',
-            });
-        console.log(response.body)
-        expect(response.status).toBe(httpStatus.BAD_REQUEST);
-        expect(response.body.message).toBe('Invalid Otp')
-    });
-
-    test('should fail to verify email', async () => {
-        jest.setTimeout(newTimeout)
-        const response = await request
-            .post('/api/v1/auth/verify-email')
-            .set('Accept', 'application/json')
-            .send({
-                otp,
-            });
-        console.log(response.body)
-        expect(response.status).toBe(httpStatus.BAD_REQUEST);
-        expect(response.body.message).toBe('"id" is required');
-    });
+    
 });
 
 // /get-my-prayers /verify-email

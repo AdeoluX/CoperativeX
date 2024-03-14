@@ -38,7 +38,7 @@ const userSignUp = async ({email, password, confirmPassword, phone, firstname, l
       otp: generateOtp.otp
     }
   })
-  const token = generateToken({ id: user.id, email: user.email });
+  const token = generateToken({ id: user.id, email: user.email, role: user.role });
   abortIf(user == null, httpStatus.BAD_REQUEST, "Unable to SignUp");
   return {...user.toJSON(), token, ...(process.env.NODE_ENV !== 'production' && {otp:generateOtp})};
 };
@@ -99,7 +99,7 @@ const activateAccount = async ({id, otp}) => {
         _id: token.member
       },
       changes: {
-        emailStatus: true
+        emailStatus: 'verified'
       }
     }).update();
     await genericRepo.setOptions('Otp', {
@@ -124,14 +124,21 @@ const authenticate2FA = async ({otp, email}) => {
     }
   }).findOne()).toJSON()
   const twoFA = await genericRepo.setOptions('Otp', {
-    condition: { otp, member: getUser._id }
+    condition: { otp, member: getUser._id, used: false }
   }).findOne()
-  const { timedHash } = twoFA
+  // const { timedHash } = twoFA
   abortIf(!twoFA, httpStatus.BAD_REQUEST, 'OTP has expired. Please Login again.')
   const token = generateToken({
     id: getUser._id,
+    role: getUser.role,
     email
   })
+  await genericRepo.setOptions('Otp', {
+    condition: { _id: twoFA._id },
+    changes: {
+      used: true
+    }
+  }).update()
   
   return {
     ...getUser,

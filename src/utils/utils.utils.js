@@ -35,11 +35,9 @@ const otpGenerator = async ({member: {_id}}) => {
   });
   // Save the OTP to the database
   const savedOTP = await otpInstance.save();
-  Members.findByIdAndUpdate(_id, {
-    $push: {
-      otps: savedOTP._id
-    }
-  })
+  let members = await Members.findById(_id)
+  members.otps = [savedOTP._id]
+  await members.save()
   return {otp, otpInstance};
 } 
 

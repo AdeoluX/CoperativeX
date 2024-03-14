@@ -46,6 +46,14 @@ const MemberSchema = new Schema({
     type: Boolean,
     default: true
   },
+  image: {
+    type: String,
+  },
+  role: {
+    type: Array,
+    default: ['user']
+  },
+  profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: 'Attachment' },
   createdAt: {
     type: Date,
     default: Date.now,

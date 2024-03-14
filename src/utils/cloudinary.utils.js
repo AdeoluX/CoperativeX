@@ -7,7 +7,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const upload = async (file) => {
+const uploadFiles = async (file) => {
     let response;
     await cloudinary.uploader.upload(file, (error, result) => {
         if (error) {
@@ -20,6 +20,6 @@ const upload = async (file) => {
 }
 
 module.exports = {
-    upload
+    uploadFiles
 }
 
