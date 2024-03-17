@@ -54,6 +54,9 @@ const MemberSchema = new Schema({
     default: ['user']
   },
   profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: 'Attachment' },
+  wallets: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Wallet' }
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

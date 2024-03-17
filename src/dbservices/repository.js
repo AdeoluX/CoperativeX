@@ -63,7 +63,11 @@ class GenericRepo {
          if(inclussions.length > 0){
             let query = this.dbQuery.find(condition)
             for(var item of inclussions){
-              query = query.populate({path: item, options: { strictPopulate: false },})
+               if(typeof item === 'object' && item !== null){
+                  query = query.populate({path: item.ref, select: item.select, options: { strictPopulate: false },})
+               }else{
+                  query = query.populate({path: item, options: { strictPopulate: false },})
+               }
             }
             return query.sort({ createdAt: 1 })
                         .skip(offset)
@@ -87,7 +91,7 @@ class GenericRepo {
             for(var item of inclussions){
               query = query.populate(item)
             }
-            return query
+            return query.exec()
          }
          return this.dbQuery.findOne(condition).populate(inclussions[0]).exec()
       }

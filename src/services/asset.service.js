@@ -27,7 +27,7 @@ class AssetService {
         }
         createAsset.images = images_
         await createAsset.save();
-        return createAsset
+        return {message: 'Asset create successfully.'}
     }
 
     static uploadAssetDocs = async ({asset_id, files}) => {
@@ -49,7 +49,7 @@ class AssetService {
         }
         asset.docs = [...asset.docs, ...docs]
         await asset.save();
-        return asset
+        return {message: 'Document uploaded successfully.'}
     }
 
     static getAllAssets = async({paginateOptions}) => {

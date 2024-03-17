@@ -2,14 +2,12 @@ const express = require("express");
 const {validate, validateReq} = require('../middleware/validate')
 const {authValidators: {signInValidator, signUpValidator, verifyEmailValidator}} = require('../validations/index')
 const {
-  UserController
+  PaymentController
 } = require("../controller");
 const { verify } = require("../middleware/verifyToken");
-
 const router = express.Router();
 
-router.get("/me", verify('user'), UserController.me);
-router.get('/my-transaction', verify('user'), UserController.myTransaction)
-router.get("/my-portfolio", verify('user'), UserController.myPortfolio)
+router.post("/fund-wallet", verify('user'), PaymentController.fundWallet);
+router.post("/buy-token/:asset_id", verify('user'), PaymentController.buyToken);
 
 module.exports = router; 

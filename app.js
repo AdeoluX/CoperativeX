@@ -9,7 +9,7 @@ const mongo = require('./src/config/db.config')
 mongo
 
 const { errorConverter, errorHandler } = require("./src/middleware/error");
-const { authRoutes, userRoutes, assetRoutes } = require("./src/routes");
+const { authRoutes, userRoutes, assetRoutes, paymentRoutes, webhookRoutes } = require("./src/routes");
 const ApiError = require("./src/utils/ApiError");
 const httpStatus = require("http-status");
 
@@ -24,6 +24,8 @@ app.use(express.json());
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/assets", assetRoutes)
+app.use("/api/v1/payment", paymentRoutes)
+app.use("/api/v1/webhook", webhookRoutes)
 
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, "Not found"));

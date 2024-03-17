@@ -76,9 +76,10 @@ const login = async ({email, password}) => {
 };
 
 const activateAccount = async ({id, otp}) => {
+  let member;
   const token = await genericRepo.setOptions('Otp', {
     condition: {
-      _id: id, used: false, otp
+      member: id, used: false, otp
     }
   }).findOne()
   abortIf(!token, httpStatus.BAD_REQUEST, 'Invalid Otp')
@@ -94,7 +95,7 @@ const activateAccount = async ({id, otp}) => {
     abortIf(true, httpStatus.BAD_REQUEST, 'Invalid Otp')
   }
   if(token.otp === otp){
-    await genericRepo.setOptions('Members', {
+    member = await genericRepo.setOptions('Members', {
       condition: {
         _id: token.member
       },
@@ -111,8 +112,18 @@ const activateAccount = async ({id, otp}) => {
       }
     }).update()
   }
+  const createWallet = await genericRepo.setOptions('Wallet', {
+    // member
+    data: {
+      member: id,
+      currency: "NGN"
+    }
+  }).create()
+  member.wallets.push(createWallet._id)
+  await member.save()
   return {
-    message: "Successful"
+    message: "Successful",
+    user: member
   }
 }
 
