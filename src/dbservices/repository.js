@@ -53,7 +53,23 @@ class GenericRepo {
 
    findAll = () => {
       const { selectOptions, condition, transaction, inclussions } = this.query
-      return this.dbQuery.find(condition)
+      if(inclussions){
+         if(inclussions.length > 0){
+            let query = this.dbQuery.find(condition)
+            for(var item of inclussions){
+               if(typeof item === 'object' && item !== null){
+                  // ...(item.populate && {populate: {path: item.populate.path}})
+                  query = query.populate({path: item.ref, select: item.select, options: { strictPopulate: false }, })
+               }else{
+                  query = query.populate({path: item, options: { strictPopulate: false },})
+               }
+            }
+            return query.sort({ createdAt: 1 })
+                        .exec()
+         }
+      }else{
+         return this.dbQuery.find(condition)
+      }
    }
 
    findAllAndPagination = () => {
@@ -64,7 +80,8 @@ class GenericRepo {
             let query = this.dbQuery.find(condition)
             for(var item of inclussions){
                if(typeof item === 'object' && item !== null){
-                  query = query.populate({path: item.ref, select: item.select, options: { strictPopulate: false },})
+                  // ...(item.populate && {populate: {path: item.populate.path}})
+                  query = query.populate({path: item.ref, select: item.select, options: { strictPopulate: false }, })
                }else{
                   query = query.populate({path: item, options: { strictPopulate: false },})
                }
